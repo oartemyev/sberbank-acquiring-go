@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"regexp"
+	"strconv"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	acquiring "github.com/oartemyev/sberbank-acquiring-go"
 	"github.com/oartemyev/sberbank-acquiring-go/endpoints"
 	"github.com/oartemyev/sberbank-acquiring-go/schema"
-	"net/http"
-	"regexp"
-	"strconv"
 )
 
 type Client struct {
@@ -308,8 +309,8 @@ func (c Client) RegisterOrderPreAuth(ctx context.Context, order Order) (*schema.
 //
 func (c Client) register(ctx context.Context, path string, order Order) (*schema.OrderResponse, *http.Response, error) {
 	body := make(map[string]string)
-	var orderBundle, _ = json.Marshal(order.OrderBundle)
-	body["orderNumber"] = order.OrderNumber
+	//var orderBundle, _ = json.Marshal(order.OrderBundle)
+	body["orderNumber"] = string(order.OrderNumber)
 	body["amount"] = strconv.Itoa(order.Amount)
 	body["returnUrl"] = order.ReturnURL
 	body["failUrl"] = order.FailURL
@@ -318,7 +319,7 @@ func (c Client) register(ctx context.Context, path string, order Order) (*schema
 	body["merchantLogin"] = order.MerchantLogin
 	body["expirationDate"] = order.ExpirationDate
 	body["bindingId"] = order.BindingID
-	body["orderBundle"] = string(orderBundle[:])
+	//body["orderBundle"] = string(orderBundle[:])
 	body["features"] = order.Features
 
 	req, err := c.API.NewRestRequest(ctx, http.MethodGet, path, body, order.JSONParams)

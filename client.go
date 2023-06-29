@@ -3,16 +3,18 @@ package sberbank_acquiring_go
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/oartemyev/sberbank-acquiring-go/schema"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/oartemyev/sberbank-acquiring-go/schema"
 )
 
 // URLS for API endpoints
@@ -98,17 +100,31 @@ var NewRestRequest = func(c *Client, ctx context.Context, method, urlPath string
 
 	jsonParamsEncoded, _ := json.Marshal(jsonParams)
 
+	//fmt.Println(string(jsonParamsEncoded[:]))
+
 	body := url.Values{}
 	body.Add("userName", c.Config.UserName)
 	body.Add("password", c.Config.Password)
 	body.Add("currency", strconv.Itoa(c.Config.Currency))
-	body.Add("jsonParams", string(jsonParamsEncoded[:]))
-	body.Add("sessionTimeoutSecs", strconv.Itoa(c.Config.SessionTimeoutSecs))
+	if string(jsonParamsEncoded[:]) != "null" {
+		body.Add("jsonParams", string(jsonParamsEncoded[:]))
+		body.Add("sessionTimeoutSecs", strconv.Itoa(c.Config.SessionTimeoutSecs))
+	}
 
 	for key, value := range data {
-		body.Add(key, value)
+		if value != "" {
+			body.Add(key, value)
+		}
 	}
 	reqData := body.Encode()
+
+	if method == "GET" {
+		fmt.Println(reqData)
+		uri += "?" + reqData
+		//body = url.Values{}
+		reqData = ""
+	}
+
 	req, err := http.NewRequest(method, uri, strings.NewReader(reqData))
 
 	if err != nil {
@@ -232,8 +248,14 @@ func (c *ClientConfig) validate() error {
 // newAPI creates a new client.
 func newAPI(cfg *ClientConfig, options ...ClientOption) *Client {
 	client := &Client{
-		Config:     cfg,
-		httpClient: &http.Client{},
+		Config: cfg,
+		httpClient: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+			},
+		},
 	}
 
 	for _, option := range options {
