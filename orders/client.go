@@ -53,7 +53,7 @@ type Order struct {
 func (order Order) Validate() error {
 	return validation.ValidateStruct(&order,
 		validation.Field(&order.ReturnURL, validation.Required, is.URL),
-		validation.Field(&order.OrderNumber, validation.Required, validation.Length(1, 30)),
+		validation.Field(&order.OrderNumber, validation.Required, validation.Length(1, 36)),
 		validation.Field(&order.FailURL, is.URL),
 	)
 }
@@ -446,8 +446,8 @@ func validateRefundOrder(order Order) error {
 	}
 
 	if order.OrderNumber != "" {
-		if len(order.OrderNumber) > 30 {
-			return fmt.Errorf("orderNumber is too long (>30)")
+		if len(order.OrderNumber) > 36 {
+			return fmt.Errorf("orderNumber is too long (>36)")
 		}
 	}
 
@@ -498,7 +498,7 @@ func validateOrderNumber(order Order) error {
 
 	if order.OrderNumber != "" {
 		if len(order.OrderNumber) > 36 {
-			return fmt.Errorf("orderNumber is too long (>30)")
+			return fmt.Errorf("orderNumber is too long (>36)")
 		}
 	}
 

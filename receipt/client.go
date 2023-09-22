@@ -64,8 +64,8 @@ func validateReceiptStatusRequest(receiptStatusRequest StatusRequest) error {
 	}
 
 	if receiptStatusRequest.OrderNumber != "" {
-		if len(receiptStatusRequest.OrderNumber) > 30 {
-			return fmt.Errorf("orderNumber is too long (>30)")
+		if len(receiptStatusRequest.OrderNumber) > 36 {
+			return fmt.Errorf("orderNumber is too long (>36)")
 		}
 	}
 
