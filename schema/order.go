@@ -23,7 +23,7 @@ type OrderStatusResponse struct {
 	ErrorCode             int    `json:"errorCode,string,omitempty"`
 	ErrorMessage          string `json:"errorMessage,omitempty"`
 	Amount                int    `json:"amount"`
-	Currency              int    `json:"currency,omitempty"`
+	Currency              string `json:"currency,omitempty"`
 	Date                  string `json:"date"`
 	OrderDescription      string `json:"orderDescription,omitempty"`
 	Ip                    string `json:"ip"`
@@ -37,7 +37,7 @@ type OrderStatusResponse struct {
 	}
 	CardAuthInfo struct {
 		MaskedPan      string `json:"maskedPan,omitempty"`
-		Expiration     int    `json:"expiration,omitempty"`
+		Expiration     string `json:"expiration,omitempty"`
 		CardholderName string `json:"cardholderName,omitempty"`
 		ApprovalCode   string `json:"approvalCode,omitempty"`
 		Chargeback     string `json:"chargeback,omitempty"`
