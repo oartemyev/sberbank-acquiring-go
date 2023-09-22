@@ -497,7 +497,7 @@ func validateOrderNumber(order Order) error {
 	}
 
 	if order.OrderNumber != "" {
-		if len(order.OrderNumber) > 30 {
+		if len(order.OrderNumber) > 36 {
 			return fmt.Errorf("orderNumber is too long (>30)")
 		}
 	}
